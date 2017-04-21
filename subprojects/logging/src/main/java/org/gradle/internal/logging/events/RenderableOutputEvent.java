@@ -24,7 +24,7 @@ import org.gradle.internal.operations.OperationIdentifier;
 public abstract class RenderableOutputEvent extends CategorisedOutputEvent {
     private OperationIdentifier buildOperationIdentifier;
 
-    protected RenderableOutputEvent(long timestamp, String category, LogLevel logLevel, @Nullable org.gradle.internal.operations.OperationIdentifier buildOperationIdentifier) {
+    protected RenderableOutputEvent(long timestamp, String category, LogLevel logLevel, @Nullable OperationIdentifier buildOperationIdentifier) {
         super(timestamp, category, logLevel);
         this.buildOperationIdentifier = buildOperationIdentifier;
     }

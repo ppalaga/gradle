@@ -43,8 +43,7 @@ public interface ProgressLoggerFactory {
      * with the given build operation id.
      *
      * @param loggerCategory The logger category.
-     * @param buildOperationId OperationIdentifier to be associated with all logs produced by
-     * the new ProgressLogger
+     * @param buildOperationId OperationIdentifier to be associated with all logs produced by the new ProgressLogger.
      * @return the progress logger for the operation.
      */
     ProgressLogger newOperation(Class<?> loggerCategory, OperationIdentifier buildOperationId);
