@@ -29,4 +29,8 @@ public class BuildOperationIdentifierRegistry {
             localOperationId.set(operationId);
         }
     }
+
+    public static void clearCurrentOperationIdentifier() {
+        localOperationId.remove();
+    }
 }

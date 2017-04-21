@@ -18,6 +18,7 @@ package org.gradle.internal.logging.events;
 
 import org.gradle.api.Nullable;
 import org.gradle.api.logging.LogLevel;
+import org.gradle.internal.operations.OperationIdentifier;
 
 public class ProgressStartEvent extends CategorisedOutputEvent {
     private final OperationIdentifier operationId;

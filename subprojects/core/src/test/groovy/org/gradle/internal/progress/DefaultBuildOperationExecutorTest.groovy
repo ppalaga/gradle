@@ -24,6 +24,7 @@ import org.gradle.internal.logging.progress.ProgressLoggerFactory
 import org.gradle.internal.operations.BuildOperationContext
 import org.gradle.internal.operations.DefaultBuildOperationProcessor
 import org.gradle.internal.operations.DefaultBuildOperationQueueFactory
+import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.RunnableBuildOperation
 import org.gradle.internal.resources.DefaultResourceLockCoordinationService
 import org.gradle.internal.time.TimeProvider
@@ -66,7 +67,7 @@ class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
         }
 
         then:
-        1 * progressLoggerFactory.newOperation(_) >> progressLogger
+        1 * progressLoggerFactory.newOperation(_, _ as OperationIdentifier) >> progressLogger
         1 * progressLogger.setDescription("<some-operation>")
         1 * progressLogger.setShortDescription("<some-op>")
         1 * progressLogger.started()
@@ -123,7 +124,7 @@ class DefaultBuildOperationExecutorTest extends ConcurrentSpec {
         }
 
         then:
-        1 * progressLoggerFactory.newOperation(_) >> progressLogger
+        1 * progressLoggerFactory.newOperation(_, _ as OperationIdentifier) >> progressLogger
         1 * progressLogger.setDescription("<some-operation>")
         1 * progressLogger.setShortDescription("<some-op>")
         1 * progressLogger.started()

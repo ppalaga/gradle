@@ -15,7 +15,9 @@
  */
 package org.gradle.internal.operations;
 
-public class OperationIdentifier {
+import java.io.Serializable;
+
+public class OperationIdentifier implements Serializable {
     private final long id;
 
     public OperationIdentifier(long id) {

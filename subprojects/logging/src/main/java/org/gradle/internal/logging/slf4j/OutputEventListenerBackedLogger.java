@@ -19,6 +19,7 @@ package org.gradle.internal.logging.slf4j;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
+import org.gradle.internal.operations.BuildOperationIdentifierRegistry;
 import org.gradle.internal.time.TimeProvider;
 import org.gradle.internal.logging.events.LogEvent;
 import org.gradle.internal.logging.events.OutputEventListener;
@@ -127,7 +128,10 @@ public class OutputEventListenerBackedLogger implements Logger {
     }
 
     private void log(LogLevel logLevel, Throwable throwable, String message) {
-        LogEvent logEvent = new LogEvent(timeProvider.getCurrentTime(), name, logLevel, message, throwable);
+        LogEvent logEvent = new LogEvent.Builder(timeProvider.getCurrentTime(), name, logLevel, message)
+            .withThrowable(throwable)
+            .forOperation(BuildOperationIdentifierRegistry.getCurrentOperationIdentifier())
+            .build();
         OutputEventListener outputEventListener = context.getOutputEventListener();
         try {
             outputEventListener.onOutput(logEvent);
