@@ -55,7 +55,9 @@ abstract class NativeCompilerTest extends Specification {
 
     WorkerLeaseService workerLeaseService = Stub(WorkerLeaseService)
 
-    protected BuildOperationExecutor buildOperationExecutor = new DefaultBuildOperationExecutor(Mock(BuildOperationListener), Mock(TimeProvider), Mock(ProgressLoggerFactory),
+    private BuildOperationListener buildOperationListener = Mock(BuildOperationListener)
+    private TimeProvider timeProvider = Mock(TimeProvider)
+    protected BuildOperationExecutor buildOperationExecutor = new DefaultBuildOperationExecutor(buildOperationListener, timeProvider, Mock(ProgressLoggerFactory),
         new DefaultBuildOperationQueueFactory(workerLeaseService), new DefaultExecutorFactory(), 1)
 
     def setup() {
@@ -160,8 +162,11 @@ abstract class NativeCompilerTest extends Specification {
         then:
 
         sourceFiles.each{ sourceFile ->
-            1 * commandLineTool.execute(_)
+            1 * commandLineTool.execute(_, _)
         }
+        4 * timeProvider.getCurrentTime()
+        2 * buildOperationListener.started(_, _)
+        2 * buildOperationListener.finished(_, _)
         0 * _
 
         cleanup:
@@ -199,7 +204,7 @@ abstract class NativeCompilerTest extends Specification {
 
         then:
         1 * action.execute(_)
-        2 * commandLineTool.execute(_)
+        2 * commandLineTool.execute(_, _)
     }
 
     def "options file is written"() {

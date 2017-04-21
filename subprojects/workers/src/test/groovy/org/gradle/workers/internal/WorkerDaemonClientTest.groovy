@@ -16,10 +16,10 @@
 
 package org.gradle.workers.internal
 
-import org.gradle.internal.logging.events.OperationIdentifier
 import org.gradle.internal.operations.BuildOperationContext
 import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.internal.operations.CallableBuildOperation
+import org.gradle.internal.progress.BuildOperationState
 import spock.lang.Specification
 
 import static org.gradle.internal.work.WorkerLeaseRegistry.WorkerLease
@@ -27,7 +27,7 @@ import static org.gradle.internal.work.WorkerLeaseRegistry.WorkerLeaseCompletion
 
 class WorkerDaemonClientTest extends Specification {
     BuildOperationExecutor buildOperationExecutor = Mock(BuildOperationExecutor)
-    OperationIdentifier buildOperationId = Mock(OperationIdentifier)
+    BuildOperationState buildOperation = Mock(BuildOperationState)
     WorkerLease workerOperation = Mock(WorkerLease)
     WorkerLeaseCompletion completion = Mock(WorkerLeaseCompletion)
 
@@ -44,7 +44,7 @@ class WorkerDaemonClientTest extends Specification {
         client = client(workerDaemonProcess)
 
         when:
-        client.execute(Stub(WorkSpec), workerOperation, buildOperationId)
+        client.execute(Stub(WorkSpec), workerOperation, buildOperation)
 
         then:
         1 * buildOperationExecutor.call(_ as CallableBuildOperation) >> { args -> args[0].call(Mock(BuildOperationContext)) }
@@ -59,7 +59,7 @@ class WorkerDaemonClientTest extends Specification {
         assert client.uses == 0
 
         when:
-        5.times { client.execute(Stub(WorkSpec), workerOperation, buildOperationId) }
+        5.times { client.execute(Stub(WorkSpec), workerOperation, buildOperation) }
 
         then:
         5 * buildOperationExecutor.call(_ as CallableBuildOperation) >> { args -> args[0].call(Mock(BuildOperationContext)) }
@@ -76,7 +76,7 @@ class WorkerDaemonClientTest extends Specification {
         client = client()
 
         when:
-        client.execute(Stub(WorkSpec), operation, buildOperationId)
+        client.execute(Stub(WorkSpec), operation, buildOperation)
 
         then:
         1 * operation.startChild() >> completion
@@ -92,7 +92,7 @@ class WorkerDaemonClientTest extends Specification {
         client = client(workerDaemonProcess)
 
         when:
-        client.execute(Stub(WorkSpec), operation, buildOperationId)
+        client.execute(Stub(WorkSpec), operation, buildOperation)
 
         then:
         1 * operation.startChild() >> completion
