@@ -21,8 +21,6 @@ import org.gradle.internal.logging.events.LogLevelChangeEvent
 import org.gradle.internal.logging.events.OutputEvent
 import org.gradle.internal.logging.events.ProgressCompleteEvent
 import org.gradle.internal.logging.events.ProgressEvent
-import org.gradle.internal.logging.events.ProgressStartEvent
-import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.serialize.PlaceholderException
 import org.gradle.internal.serialize.Serializer
 import org.gradle.internal.serialize.SerializerSpec
@@ -45,33 +43,6 @@ class DaemonMessageSerializerTest extends SerializerSpec {
         def result = serialize(event, serializer)
         result instanceof LogLevelChangeEvent
         result.newLogLevel == LogLevel.LIFECYCLE
-    }
-
-    def "can serialize ProgressStartEvent messages"() {
-        expect:
-        def event = new ProgressStartEvent(OPERATION_ID, new OperationIdentifier(5678L), FAKE_TIMESTAMP_2, CATEGORY, "description", "short", "header", "status")
-        def result = serialize(event, serializer)
-        result instanceof ProgressStartEvent
-        result.operationId == OPERATION_ID
-        result.parentId == new OperationIdentifier(5678L)
-        result.timestamp == FAKE_TIMESTAMP_2
-        result.category == CATEGORY
-        result.description == "description"
-        result.shortDescription == "short"
-        result.loggingHeader == "header"
-        result.status == "status"
-
-        def event2 = new ProgressStartEvent(OPERATION_ID, null, FAKE_TIMESTAMP_2, CATEGORY, "description", null, null, "")
-        def result2 = serialize(event2, serializer)
-        result2 instanceof ProgressStartEvent
-        result2.operationId == OPERATION_ID
-        result2.parentId == null
-        result2.timestamp == FAKE_TIMESTAMP_2
-        result2.category == CATEGORY
-        result2.description == "description"
-        result2.shortDescription == null
-        result2.loggingHeader == null
-        result2.status == ""
     }
 
     def "can serialize ProgressCompleteEvent messages"() {

@@ -65,7 +65,7 @@ public class WorkInProgressRenderer extends BatchOutputEventListener {
         if (event instanceof ProgressStartEvent) {
             progressArea.setVisible(true);
             ProgressStartEvent startEvent = (ProgressStartEvent) event;
-            ProgressOperation op = operations.start(startEvent.getShortDescription(), startEvent.getStatus(), startEvent.getCategory(), startEvent.getOperationId(), startEvent.getParentId());
+            ProgressOperation op = operations.start(startEvent.getShortDescription(), startEvent.getStatus(), startEvent.getCategory(), startEvent.getProgressOperationId(), startEvent.getParentProgressOperationId());
             attach(op);
         } else if (event instanceof ProgressCompleteEvent) {
             ProgressCompleteEvent completeEvent = (ProgressCompleteEvent) event;

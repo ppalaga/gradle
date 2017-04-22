@@ -96,8 +96,8 @@ public class ProgressLogEventGenerator implements OutputEventListener {
     }
 
     private void onStart(ProgressStartEvent progressStartEvent) {
-        Operation operation = new Operation(progressStartEvent.getCategory(), progressStartEvent.getLoggingHeader(), progressStartEvent.getTimestamp(), progressStartEvent.getOperationId());
-        operations.put(progressStartEvent.getOperationId(), operation);
+        Operation operation = new Operation(progressStartEvent.getCategory(), progressStartEvent.getLoggingHeader(), progressStartEvent.getTimestamp(), progressStartEvent.getProgressOperationId());
+        operations.put(progressStartEvent.getProgressOperationId(), operation);
 
         if (!deferHeader || !(progressStartEvent.getLoggingHeader() != null && progressStartEvent.getLoggingHeader().equals(progressStartEvent.getShortDescription()))) {
             operation.startHeader();

@@ -58,24 +58,22 @@ public class DefaultProgressLoggerFactory implements ProgressLoggerFactory {
         return init(loggerClass.toString(), parent, null);
     }
 
-    private ProgressLogger init(String loggerCategory, @Nullable ProgressLogger parentOperation, @Nullable OperationIdentifier operationIdentifier) {
+    private ProgressLogger init(String loggerCategory, @Nullable ProgressLogger parentOperation, @Nullable OperationIdentifier buildOperationIdentifier) {
         if (parentOperation != null && !(parentOperation instanceof ProgressLoggerImpl)) {
             throw new IllegalArgumentException("Unexpected parent logger.");
         }
 
-        // Assign fake operation ID so that we can still complete logging headers correctly.
-        // This will go away as we force all progress loggers to provide a build operation id
-        if (operationIdentifier == null) {
-            // Decrement from -1 to avoid any conflict between this ID and build operation IDs
-            operationIdentifier = new OperationIdentifier(nextId.getAndDecrement());
-        }
-        return new ProgressLoggerImpl((ProgressLoggerImpl) parentOperation, operationIdentifier, loggerCategory, progressListener, timeProvider);
+        // Decrement from -1 to avoid any conflict between this ID and build operation IDs
+        OperationIdentifier progressOperationId = new OperationIdentifier(nextId.getAndDecrement());
+
+        return new ProgressLoggerImpl((ProgressLoggerImpl) parentOperation, progressOperationId, loggerCategory, progressListener, timeProvider, buildOperationIdentifier);
     }
 
     private enum State { idle, started, completed }
 
     private class ProgressLoggerImpl implements ProgressLogger {
         private final OperationIdentifier operationIdentifier;
+        private final OperationIdentifier buildOperationId;
         private final String category;
         private final ProgressListener listener;
         private final TimeProvider timeProvider;
@@ -85,12 +83,13 @@ public class DefaultProgressLoggerFactory implements ProgressLoggerFactory {
         private String loggingHeader;
         private State state = State.idle;
 
-        public ProgressLoggerImpl(ProgressLoggerImpl parent, OperationIdentifier operationIdentifier, String category, ProgressListener listener, TimeProvider timeProvider) {
+        public ProgressLoggerImpl(ProgressLoggerImpl parent, OperationIdentifier operationIdentifier, String category, ProgressListener listener, TimeProvider timeProvider, @Nullable OperationIdentifier buildOperationId) {
             this.parent = parent;
             this.operationIdentifier = operationIdentifier;
             this.category = category;
             this.listener = listener;
             this.timeProvider = timeProvider;
+            this.buildOperationId = buildOperationId;
         }
 
         @Override
@@ -152,7 +151,7 @@ public class DefaultProgressLoggerFactory implements ProgressLoggerFactory {
             }
             current.set(this);
             BuildOperationIdentifierRegistry.setCurrentOperationIdentifier(operationIdentifier);
-            listener.started(new ProgressStartEvent(operationIdentifier, parent == null ? null : parent.operationIdentifier, timeProvider.getCurrentTime(), category, description, shortDescription, loggingHeader, toStatus(status)));
+            listener.started(new ProgressStartEvent(operationIdentifier, parent == null ? null : parent.operationIdentifier, timeProvider.getCurrentTime(), category, description, shortDescription, loggingHeader, toStatus(status), buildOperationId));
         }
 
         public void progress(String status) {
