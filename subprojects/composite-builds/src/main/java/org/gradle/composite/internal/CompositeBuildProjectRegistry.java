@@ -21,16 +21,22 @@ import org.gradle.initialization.BuildProjectRegistry;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CompositeBuildProjectRegistry implements BuildProjectRegistry {
     private final Set<ProjectIdentifier> allProjects = Sets.newLinkedHashSet();
+    private final AtomicBoolean locked = new AtomicBoolean();
 
-    public void registerProjects(Collection<? extends ProjectIdentifier> projectIdentifiers) {
+    void registerProjects(Collection<? extends ProjectIdentifier> projectIdentifiers) {
+        if (locked.get()) {
+            throw new IllegalStateException("Cannot register project after registry has been read.");
+        }
         allProjects.addAll(projectIdentifiers);
     }
 
     @Override
     public Set<ProjectIdentifier> getAllProjects() {
+        locked.set(true);
         return allProjects;
     }
 }
