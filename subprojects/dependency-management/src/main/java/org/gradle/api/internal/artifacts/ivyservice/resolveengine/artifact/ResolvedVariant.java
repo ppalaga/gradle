@@ -30,7 +30,6 @@ public interface ResolvedVariant extends HasAttributes {
 
     void collectBuildDependencies(Collection<? super TaskDependency> dest);
 
-    // TODO:DAZ Use a different visitor
     void visit(ArtifactVisitor visitor);
 
     void addPrepareActions(BuildOperationQueue<RunnableBuildOperation> actions, ArtifactVisitor visitor);
